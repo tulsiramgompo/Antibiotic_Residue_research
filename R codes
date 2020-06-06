@@ -1,0 +1,116 @@
+getwd()
+setwd("/Users/Tulsigompo/Documents/Presentaion_Dr_Gompo/antibiotic_residue/Antibiotic_residue_working_on_pendrive")
+library(readr)
+library(ggplot2)
+library(ggthemes)
+library(dplyr)
+list.files()
+residue_test<-read_csv("/Users/Tulsigompo/Documents/Presentaion_Dr_Gompo/antibiotic_residue/Antibiotic_residue_working_on_pendrive/All_district_data_formated_final.csv")
+head(residue_test)
+
+mean(residue_test$Antibiotic=="fluroquinolones")
+median(residue_test$Antibiotic=="fluroquinolones")
+mean(residue_test$Antibiotic =="gentamicin")
+median(residue_test$Antibiotic=="gentamicin ")
+mean(residue_test$Antibiotic =="Tetracycline")
+median(residue_test$Antibiotic=="Tetracycline")
+mean(residue_test$Antibiotic=="Sulphonamides")
+mean(residue_test$Antibiotic=="penicillin")
+hist(residue_test$ppb)
+variable.names(residue_test)
+##
+Tetra<- residue_test%>%
+  filter( Antibiotic =="Tetracycline")
+Tetra
+median(Tetra$ppb)
+##
+Genta<- residue_test%>%
+  filter( Antibiotic =="gentamicin")
+Genta
+median(Genta$ppb)
+mean(Genta$ppb, na.rm = TRUE)
+##
+fluro<-residue_test%>%
+  filter(Antibiotic=="fluroquinolones")
+fluro
+median(fluro$ppb)
+mean(residue_test$ppb,na.rm = TRUE)
+
+## Box plot 
+
+## for tetracyclines
+box_terta<-ggplot(Tetra, aes(x= Sample_type, y=ppb , group= Sample_type)) +
+  geom_boxplot(color= "blue", size= 1) +theme_bw((base_size = 18))
+box_terta
+
+## for gentamicin
+box_genta<-ggplot(Genta, aes(x= Sample_type, y=ppb , group= Sample_type)) +
+  geom_boxplot(color= "blue", size= 1) +theme_bw((base_size = 18))
+box_genta
+
+## for Fluroquinolones
+box_fluro<- ggplot(fluro, aes(x= Sample_type, y=ppb , group= Sample_type)) +
+  geom_boxplot(color= "blue", size= 1) + theme_tufte((base_size = 12)) +
+xlab(" organs of poultry ") + ylab (" Overall Antibiotic concentrations")+
+ggtitle("The antibiotic residues in different organs of Chicken meat collected") 
+  
+box_fluro
+
+a<-table(Tetra$ppb,Genta$ppb,fluro$ppb)
+
+# BoxPlot for all
+
+
+
+residue_test %>%
+  group_by(Antibiotic) %>%
+  group_by(Sample_type)%>%
+  
+  summarize(mean_ppb = mean(ppb, na.rm = TRUE))
+           
+
+
+                                  
+box_all<- ggplot (residue_test, aes(x = Sample_type, y= ppb , group = Sample_type)) +
+                                    geom_boxplot(color= "blue", size= 1) + theme_tufte ((base_size = 12)) +
+                                    xlab (" organs of poultry ") + ylab ("Overall Antibiotic concentrations") +
+                                    ggtitle("The antibiotic residues in different organs of Chicken meat collected") 
+                                  box_all
+                                  
+                              ## Making good plots with desired resolutions
+                                  tiff("Plot_33.tiff", width = 4, height = 4, units = 'in', res = 300) ## I used this to set up resolution
+                                 residue_test %>%
+                                    ggplot( aes(x=Sample_type, y=ppb)) +
+                                    geom_boxplot(size= 1.2) +
+                                    ylim(1.25, 70) +
+                              geom_jitter(color="grey", size=0.7, alpha=2) +
+                                    theme_tufte((base_size = 10)) +
+                                    theme(
+                                      legend.position="none",
+                                      plot.title = element_text(size=12)
+                                    ) +
+                                  xlab ("Organs of chicken ") + ylab ("Overall antibiotic residues in ppb or μg/Kg/L") 
+                                 dev.off()
+
+milk_stat<-read_csv("/Users/Tulsigompo/Documents/Presentaion_Dr_Gompo/antibiotic_residue/Antibiotic_residue_working_on_pendrive/milk_data_for_R.csv")
+head(milk_stat)                            
+
+tiff("Plot_44.tiff", width = 4, height = 4, units = 'in', res = 300) ## I used this to set up resolution
+milk_stat %>%
+  ggplot( aes(x= Animal, y= ppb, group = Animal)) +
+  geom_boxplot(size= 1.2) +
+  ylim(1.25, 60) +
+  geom_jitter(color="grey", size=0.9, alpha=2) +
+  theme_tufte((base_size = 10)) +
+  theme(
+    legend.position="none",
+    plot.title = element_text(size=12)
+  ) +
+  xlab (" Milk samples") + ylab ("Overall antibiotic residues in ppb or μg/Kg/L")  
+dev.off()
+prop.test(168, 93)
+# Saving images
+
+tiff("Plot3.tiff", width = 4, height = 4, units = 'in', res = 300)
+plot(x, y) # Make plot
+dev.off()
